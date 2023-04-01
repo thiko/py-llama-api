@@ -6,7 +6,7 @@ from llama_index import (
     SimpleDirectoryReader,
     LLMPredictor,
     PromptHelper,
-)  # , ServiceContext
+)
 from langchain import OpenAI
 import logging
 from decouple import config
