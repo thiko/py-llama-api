@@ -7,7 +7,6 @@ import logging
 from decouple import config
 from llama_index.response.schema import SourceNode, Response
 from pydantic import BaseModel
-from pydantic import parse_obj_as
 
 os.environ['OPENAI_API_KEY'] = config("OPENAI_API_KEY")
 
