@@ -1,3 +1,9 @@
+# Preconditions
+Environment variables:
+- INDEX_FILE: Fullpath of the desired index file. Will be created if necessary.
+- LOAD_DIR: Directory of all input documents (word, pdf, csv, ...)
+- OPENAI_API_KEY: Your Open API key.
+
 # Run
 Dev: `uvicorn server:app --reload`
 
