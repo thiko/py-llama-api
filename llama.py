@@ -1,7 +1,8 @@
 import os
 from typing import List
 
-from llama_index import GPTSimpleVectorIndex, SimpleDirectoryReader, LLMPredictor, PromptHelper  # , ServiceContext
+from llama_index import GPTSimpleVectorIndex, SimpleDirectoryReader, \
+    LLMPredictor, PromptHelper  # , ServiceContext
 from langchain import OpenAI
 import logging
 from decouple import config
@@ -16,8 +17,11 @@ max_chunk_overlap = 20
 chunk_size_limit = 600
 
 # text-davinci-003 offers the most tokens (around 4k)
-llm_predictor = LLMPredictor(llm=OpenAI(temperature=0.5, model_name="text-davinci-003", max_tokens=num_output))
-prompt_helper = PromptHelper(max_input_size, num_output, max_chunk_overlap, chunk_size_limit=chunk_size_limit)
+llm_predictor = LLMPredictor(llm=OpenAI(temperature=0.5,
+                                        model_name="text-davinci-003",
+                                        max_tokens=num_output))
+prompt_helper = PromptHelper(max_input_size, num_output, max_chunk_overlap,
+                             chunk_size_limit=chunk_size_limit)
 
 
 class LlamaQuestionnaire:
@@ -27,16 +31,21 @@ class LlamaQuestionnaire:
 
         index_file = config('INDEX_FILE')
         data_directory = config('LOAD_DIR')
-        logging.info('Use data directory: "%s" and index file: "%s"' % (data_directory, index_file))
+        logging.info('Use data directory: "%s" and index file: "%s"' %
+                     (data_directory, index_file))
 
         # Newer version still have bugs when counting the token.
-        # service_context = ServiceContext.from_defaults(llm_predictor=llm_predictor, prompt_helper=prompt_helper)
-        # index = GPTSimpleVectorIndex.from_documents(documents, service_context=service_context)
+        # service_context = ServiceContext.from_defaults(
+        #   llm_predictor=llm_predictor, prompt_helper=prompt_helper)
+        # index = GPTSimpleVectorIndex.from_documents(documents,
+        #   service_context=service_context)
         if os.path.exists(index_file):
             self.index = GPTSimpleVectorIndex.load_from_disk(index_file)
         else:
             documents = SimpleDirectoryReader(data_directory).load_data()
-            self.index = GPTSimpleVectorIndex(documents, llm_predictor=llm_predictor, prompt_helper=prompt_helper)
+            self.index = GPTSimpleVectorIndex(documents,
+                                              llm_predictor=llm_predictor,
+                                              prompt_helper=prompt_helper)
             self.index.save_to_disk(index_file)
 
     def ask_gpt(self, question: str):
@@ -46,8 +55,9 @@ class LlamaQuestionnaire:
         result = self.index.query(question, response_mode="compact")
         try:
             return GptResponse.from_response(result)
-        except Exception as exception:
-            logging.error('Unable to parse result "%s"' % result, exc_info=True)
+        except Exception:
+            logging.error('Unable to parse result "%s"' % result,
+                          exc_info=True)
             raise
 
 
