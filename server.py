@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-
 from llama import LlamaQuestionnaire
 
 app = FastAPI()
