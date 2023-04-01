@@ -1,16 +1,16 @@
+import logging
 import os
 from typing import List
 
+from decouple import config
+from langchain import OpenAI
 from llama_index import (
     GPTSimpleVectorIndex,
-    SimpleDirectoryReader,
     LLMPredictor,
     PromptHelper,
+    SimpleDirectoryReader,
 )
-from langchain import OpenAI
-import logging
-from decouple import config
-from llama_index.response.schema import SourceNode, Response
+from llama_index.response.schema import Response, SourceNode
 from pydantic import BaseModel
 
 os.environ["OPENAI_API_KEY"] = config("OPENAI_API_KEY")
