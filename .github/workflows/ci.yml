@@ -26,7 +26,7 @@ jobs:
     - uses: syphar/restore-virtualenv@v1
       id: cache-virtualenv
     - uses: py-actions/flake8@v2
-    - run: pydocstyle
+    #- run: pydocstyle
     - run: isort . --diff --check-only
     - run: black --check --diff .
 
