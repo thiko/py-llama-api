@@ -13,6 +13,8 @@ from llama_index import (
 from llama_index.response.schema import Response, SourceNode
 from pydantic import BaseModel
 
+from data_provider import LlamaDataProvider, LocalDataProvider, S3DataProvider
+
 os.environ["OPENAI_API_KEY"] = config("OPENAI_API_KEY")
 
 max_input_size = 4096
@@ -35,33 +37,11 @@ prompt_helper = PromptHelper(
 
 
 class LlamaQuestionnaire:
-    index = None
+    index: GPTSimpleVectorIndex = None
 
     def __init__(self):
-        index_file = config("INDEX_FILE")
-        data_directory = config("LOAD_DIR")
-        logging.info(
-            'Use data directory: "%s" and index file: "%s"'
-            % (data_directory, index_file)
-        )
-
-        # Newer version still have bugs when counting the token.
-        # service_context = ServiceContext.from_defaults(
-        #   llm_predictor=llm_predictor, prompt_helper=prompt_helper)
-        # index = GPTSimpleVectorIndex.from_documents(documents,
-        #   service_context=service_context)
-        if os.path.exists(index_file):
-            self.index = GPTSimpleVectorIndex.load_from_disk(index_file)
-            logging.info("Load index from storage %s" % index_file)
-        else:
-            logging.info("Create index from data storage %s" % data_directory)
-            documents = SimpleDirectoryReader(data_directory).load_data()
-            self.index = GPTSimpleVectorIndex(
-                documents,
-                llm_predictor=llm_predictor,
-                prompt_helper=prompt_helper,
-            )
-            self.index.save_to_disk(index_file)
+        self.data_provider: LlamaDataProvider = self.__get_data_provider()
+        self.index = self.__load_index_from_data_provider()
 
     def ask_gpt(self, question: str):
         if self.index is None:
@@ -77,9 +57,42 @@ class LlamaQuestionnaire:
             raise
 
     def delete_index(self):
-        index_file = config("INDEX_FILE")
-        os.remove(index_file)
-        logging.info("Index %s deleted " % index_file)
+        self.data_provider.delete_index()
+
+    def __get_data_provider(self) -> LlamaDataProvider:
+        data_provider_config = config(
+            "DATA_PROVIDER", default="local", cast=str
+        )
+
+        is_s3_provider = (
+            data_provider_config != None
+            and data_provider_config.lower() == "s3"
+        )
+
+        if is_s3_provider:
+            return S3DataProvider()
+
+        return LocalDataProvider()
+
+    # Newer version still have bugs when counting the token.
+    # service_context = ServiceContext.from_defaults(
+    #   llm_predictor=llm_predictor, prompt_helper=prompt_helper)
+    # index = GPTSimpleVectorIndex.from_documents(documents,
+    #   service_context=service_context)
+    def __load_index_from_data_provider(self) -> GPTSimpleVectorIndex:
+        index = self.data_provider.get_index_file()
+        if self.index is not None:
+            return index
+
+        documents = self.data_provider.get_data_directory()
+        logging.info("Create index from stored documents")
+        index = GPTSimpleVectorIndex(
+            documents,
+            llm_predictor=llm_predictor,
+            prompt_helper=prompt_helper,
+        )
+        self.data_provider.save_index(index)
+        return index
 
 
 class GptSource(BaseModel):
