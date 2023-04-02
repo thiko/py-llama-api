@@ -52,7 +52,9 @@ class LlamaQuestionnaire:
         #   service_context=service_context)
         if os.path.exists(index_file):
             self.index = GPTSimpleVectorIndex.load_from_disk(index_file)
+            logging.info("Load index from storage %s" % index_file)
         else:
+            logging.info("Create index from data storage %s" % data_directory)
             documents = SimpleDirectoryReader(data_directory).load_data()
             self.index = GPTSimpleVectorIndex(
                 documents,
@@ -73,6 +75,11 @@ class LlamaQuestionnaire:
                 'Unable to parse result "%s"' % result, exc_info=True
             )
             raise
+
+    def delete_index(self):
+        index_file = config("INDEX_FILE")
+        os.remove(index_file)
+        logging.info("Index %s deleted " % index_file)
 
 
 class GptSource(BaseModel):
