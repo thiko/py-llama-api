@@ -43,14 +43,16 @@ jobs:
         extra-mypy-options: ""
         extra-isort-options: ""
 
-  tests:
-    needs: create-virtualenv
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-python@v2
-    - uses: syphar/restore-virtualenv@v1
-      id: cache-virtualenv
-    - name: Run pytest
-      run: | 
-        pytest
+# There are no tests so far
+
+#  tests:
+#    needs: create-virtualenv
+#    runs-on: ubuntu-latest
+#    steps:
+#    - uses: actions/checkout@v1
+#    - uses: actions/setup-python@v2
+#    - uses: syphar/restore-virtualenv@v1
+#      id: cache-virtualenv
+#    - name: Run pytest
+#      run: | 
+#        pytest
