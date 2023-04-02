@@ -6,8 +6,6 @@ from typing import List
 from decouple import config
 from llama_index import Document, GPTSimpleVectorIndex, SimpleDirectoryReader
 
-from s3_bucket import S3Bucket
-
 
 class LlamaDataProvider(ABC):
     def __init__(self) -> None:

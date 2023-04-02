@@ -15,20 +15,20 @@ class S3Bucket:
             self.s3.upload_file(
                 local_file_path, self.bucket_name, destination_objectname
             )
-            print("File uploaded successfully!")
+            log.info("File uploaded successfully!")
         except Exception as e:
-            print("Error uploading file: ", e)
+            log.error("Error uploading file: ", e)
 
     def download_file(self, object_key: str, local_file_path: str) -> bool:
         try:
             self.s3.download_file(
                 self.bucket_name, object_key, local_file_path
             )
-            print("File downloaded successfully!")
+            log.info("File downloaded successfully!")
             return True
         except botocore.exceptions.ClientError as e:
             if e.response["Error"]["Code"] == "404":
-                print("The object does not exist.")
+                log.warn("The object does not exist.")
                 return False
             else:
                 raise
@@ -47,17 +47,19 @@ class S3Bucket:
                 print("File downloaded successfully: ", target)
             except botocore.exceptions.ClientError as e:
                 if e.response["Error"]["Code"] == "404":
-                    print("The object does not exist: ", obj.key)
+                    log.info("The object does not exist: ", obj.key)
                 else:
                     raise
 
-    def get_list_of_objects(self):
-        # use the list_objects_v2 method to get a list of all objects in the bucket
+    def print_list_of_objects(self):
+        # use the list_objects_v2 method to get a list of
+        #   all objects in the bucket
         response = self.s3.list_objects_v2(Bucket=self.bucket_name)
 
-        # iterate over the 'Contents' key of the response dictionary to get a list of all files
+        # iterate over the 'Contents' key of the response
+        #  dictionary to get a list of all files
         for obj in response["Contents"]:
-            print(obj["Key"])
+            log.info(obj["Key"])
 
     def remove_file(self, object_key: str):
         try:

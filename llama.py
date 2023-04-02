@@ -60,7 +60,7 @@ class LlamaQuestionnaire:
         )
 
         is_s3_provider = (
-            data_provider_config != None
+            data_provider_config is not None
             and data_provider_config.lower() == "s3"
         )
 
