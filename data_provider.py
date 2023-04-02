@@ -6,6 +6,8 @@ from typing import List
 from decouple import config
 from llama_index import Document, GPTSimpleVectorIndex, SimpleDirectoryReader
 
+from s3_bucket import S3Bucket
+
 
 class LlamaDataProvider(ABC):
     def __init__(self) -> None:
@@ -64,8 +66,6 @@ class LocalDataProvider(LlamaDataProvider):
 
 
 class S3DataProvider(LlamaDataProvider):
-    from s3_bucket import S3Bucket
-
     def __init__(self) -> None:
         super().__init__()
         self.s3 = S3Bucket(config("S3_BUCKET_NAME"))
