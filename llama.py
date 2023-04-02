@@ -4,12 +4,7 @@ from typing import List
 
 from decouple import config
 from langchain import OpenAI
-from llama_index import (
-    GPTSimpleVectorIndex,
-    LLMPredictor,
-    PromptHelper,
-    SimpleDirectoryReader,
-)
+from llama_index import GPTSimpleVectorIndex, LLMPredictor, PromptHelper
 from llama_index.response.schema import Response, SourceNode
 from pydantic import BaseModel
 
