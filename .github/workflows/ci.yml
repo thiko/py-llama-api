@@ -42,9 +42,6 @@ jobs:
         extra-black-options: ""
         extra-mypy-options: ""
         extra-isort-options: ""
-    #- run: pydocstyle
-    #- run: isort . --diff --check-only
-    #- run: black --check --diff .
 
   tests:
     needs: create-virtualenv
@@ -54,5 +51,6 @@ jobs:
     - uses: actions/setup-python@v2
     - uses: syphar/restore-virtualenv@v1
       id: cache-virtualenv
-
-    - run: py.test
+    - name: Run pytest
+      run: | 
+        pytest
