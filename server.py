@@ -7,7 +7,8 @@ from llama import LlamaQuestionnaire
 
 app = FastAPI(
     title="LLAMA Index API Wrapper for simple document based use-cases",
-    description="Builds an index based on a given directory and provides a simple-to-use endpoint to \
+    description="Builds an index based on a given directory and provides \
+         a simple-to-use endpoint to \
      query the content of these using GPT 3.5",
     version="0.0.1",
     contact={
